@@ -80836,17 +80836,18 @@
       }
       g.hline(x, x + w, y + 9, P.gold0);
     }
-    // the strong-box peeping out from under the bed [206,130,40,18]: grey iron, a
-    // shade lighter than the dark bed-boards round it, with a black outline, a lit
-    // lid edge, a brass hasp and its own shadow on the floor (it used to be painted in
-    // the bed's own dark hull colours and read as part of the bed)
-    g.fillPoly([207, 137, 211, 131, 247, 131, 245, 137, 245, 149, 207, 149], P.black);
-    g.fillRect(208, 136, 36, 12, shade(RP.iron, (xx, yy) => 3.3 + (yy === 136 ? 1.4 : 0) + (xx < 210 ? 0.9 : 0) - (yy > 145 ? 0.7 : 0)));
-    g.fillPoly([208, 136, 212, 132, 246, 132, 244, 136], shade(RP.iron, (xx, yy) => 5 - (yy - 132) * 0.25));
-    g.hline(212, 245, 132, P.rock6);
-    for (const bx of [214, 228, 240]) g.vline(bx, 133, 147, P.rock0);
-    g.fillRect(224, 139, 4, 4, P.gold1); g.pset(224, 139, P.gold2); g.pset(225, 141, P.black);    // the brass hasp
-    g.hline(205, 248, 150, P.black); g.hline(209, 244, 151, P.bark0);                             // its shadow on the boards
+    // the strong-box on the floor in front of the bed [206,136,40,20]: grey iron, a
+    // shade lighter than the dark bed-boards behind it, with a black outline, a lit
+    // lid edge, a brass hasp and its own shadow on the floor. Its foot sits 6 px BELOW
+    // the bed's base line (y 148) so it reads as a box standing on the boards, not a
+    // panel of the bed (Scott, Nov 2026: "still looks merged on the bed").
+    g.fillPoly([207, 143, 211, 137, 247, 137, 245, 143, 245, 155, 207, 155], P.black);
+    g.fillRect(208, 142, 36, 12, shade(RP.iron, (xx, yy) => 3.3 + (yy === 142 ? 1.4 : 0) + (xx < 210 ? 0.9 : 0) - (yy > 151 ? 0.7 : 0)));
+    g.fillPoly([208, 142, 212, 138, 246, 138, 244, 142], shade(RP.iron, (xx, yy) => 5 - (yy - 138) * 0.25));
+    g.hline(212, 245, 138, P.rock6);
+    for (const bx of [214, 228, 240]) g.vline(bx, 139, 153, P.rock0);
+    g.fillRect(224, 145, 4, 4, P.gold1); g.pset(224, 145, P.gold2); g.pset(225, 147, P.black);    // the brass hasp
+    g.hline(205, 248, 156, P.black); g.hline(209, 244, 157, P.bark0);                             // its shadow on the boards
   }
 
   // The Turkey rug (while furnished).
@@ -80970,7 +80971,7 @@
     { id: 'cabin_door_frame', name: 'door', nouns: ['door', 'doorway', 'hinges', 'captain\'s door'], rect: [8, 82, 40, 68], approach: [40, 164, 'W'],
       look: (ctx) => (!ctx.s.flags.cabinDoorSalvaged ? 'The captain\'s own door: stout oak, panelled, with good brass hinges and a lock.'
         : 'An empty doorway. The captain\'s door is ashore, making some other room a house.') },
-    { id: 'strongbox', name: 'strong-box', nouns: ['strongbox', 'strong-box', 'strong box', 'box', 'iron box', 'papers'], rect: [204, 128, 44, 20], approach: [226, 160, 'N'],
+    { id: 'strongbox', name: 'strong-box', nouns: ['strongbox', 'strong-box', 'strong box', 'box', 'iron box', 'papers'], rect: [204, 134, 44, 24], approach: [226, 162, 'N'],
       look: (ctx) => (ctx.s.flags.papersKept ? 'The captain\'s strong-box, empty - you took his papers long ago, to keep them safe for his heirs.'
         : 'An iron strong-box, pushed under the bed. The captain\'s private business.') },
     { id: 'silver_cupboard', name: 'silver cupboard', nouns: ['cupboard', 'silver', 'plate', 'teapot', 'cellaret', 'cloth', 'damask'], rect: [270, 52, 44, 96], approach: [262, 164, 'E'],
@@ -80994,7 +80995,8 @@
   ];
 
   const CAP_WALK = [[0, 150, 320, 150, 320, 189, 0, 189]];
-  const CAP_NOWALK = [[130, 166, 172, 166, 172, 174, 130, 174]];       // trinket chest foot
+  const CAP_NOWALK = [[130, 166, 172, 166, 172, 174, 130, 174],        // trinket chest foot
+    [204, 150, 248, 150, 248, 158, 204, 158]];                           // the strong-box on the floor
   const CAP_SPOTS = spots('ship_captains_cabin', {
     spotA: [104, 170], spotB: [196, 172], spotC: [246, 180],
     c01_boot: [74, 140, 14, 8], c01_dent: [150, 168, 40, 10], cushions: [96, 68, 144, 10],
@@ -82259,18 +82261,20 @@
     // the strong-box under the bed (low-res body [208,136,36,12], lid to y 132): grey
     // iron with a dark outline, a lit lid and rim, a brass hasp and a contact shadow,
     // so it reads as a thing of its own against the dark bed-boards
-    Art.shadow(g, 452, 300, 46, 4, { strength: 1.6 });
-    g.fillPoly([414, 274, 422, 262, 494, 262, 490, 274, 490, 298, 414, 298], P.black);
-    g.fillRect(416, 272, 72, 24, shade(IRON, (xx, yy) => 3.3 + (yy < 274 ? 1.6 : 0) + (xx < 420 ? 1 : 0) - (yy > 291 ? 0.8 : 0) + grainH(xx, yy, 32) * 0.4));
-    g.fillPoly([416, 272, 424, 264, 492, 264, 488, 272], shade(IRON, (xx, yy) => 5.2 - (yy - 264) * 0.12 + grainH(xx, yy, 33) * 0.3));
-    g.hline(424, 491, 264, P.rock6); g.hline(417, 487, 273, P.rock5);
+    // (standing on the floor in front of the bed: its foot 12 px below the bed's
+    // base line at y 296, matching the low-res box moved down 6 px)
+    Art.shadow(g, 452, 312, 46, 4, { strength: 1.6 });
+    g.fillPoly([414, 286, 422, 274, 494, 274, 490, 286, 490, 310, 414, 310], P.black);
+    g.fillRect(416, 284, 72, 24, shade(IRON, (xx, yy) => 3.3 + (yy < 286 ? 1.6 : 0) + (xx < 420 ? 1 : 0) - (yy > 303 ? 0.8 : 0) + grainH(xx, yy, 32) * 0.4));
+    g.fillPoly([416, 284, 424, 276, 492, 276, 488, 284], shade(IRON, (xx, yy) => 5.2 - (yy - 276) * 0.12 + grainH(xx, yy, 33) * 0.3));
+    g.hline(424, 491, 276, P.rock6); g.hline(417, 487, 285, P.rock5);
     for (const bx of [428, 456, 480]) {
-      g.fillRect(bx, 266, 2, 30, shade(IRON, (xx) => (xx === bx ? 1.4 : 0.8)));
-      for (let ry = 268; ry < 294; ry += 6) put(g, bx, ry, P.rock4);
+      g.fillRect(bx, 278, 2, 30, shade(IRON, (xx) => (xx === bx ? 1.4 : 0.8)));
+      for (let ry = 280; ry < 306; ry += 6) put(g, bx, ry, P.rock4);
     }
-    g.fillRect(448, 278, 8, 8, shade(BRASS, (xx, yy) => (xx === 448 || yy === 278 ? 3.6 : 2.4)));   // the brass hasp
-    put(g, 451, 281, P.black); put(g, 451, 282, P.black); put(g, 450, 283, P.bark1);
-    g.ellipse(451, 289, 2, 2, P.gold0); put(g, 449, 289, P.gold2);           // its ring
+    g.fillRect(448, 290, 8, 8, shade(BRASS, (xx, yy) => (xx === 448 || yy === 290 ? 3.6 : 2.4)));   // the brass hasp
+    put(g, 451, 293, P.black); put(g, 451, 294, P.black); put(g, 450, 295, P.bark1);
+    g.ellipse(451, 301, 2, 2, P.gold0); put(g, 449, 301, P.gold2);           // its ring
   }
 
   // ===========================================================================
