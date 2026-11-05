@@ -8267,10 +8267,16 @@
     const ix = x + c, iy = y + c, iw = w - 2 * c, ih = h - 2 * c - Math.max(1, fl(c / 2));
     if (o.open) {
       L.fillRect(ix, iy, iw, ih, pat((px, py) => tpx(RP.hull, 0.2 + (py - iy) / ih * 0.8, px, py)));
-      // the top of a ladder going down
-      const lx = ix + fl(iw / 2) - 3;
-      L.vline(lx, iy + 2, iy + ih - 1, P.wood2); L.vline(lx + 6, iy + 2, iy + ih - 1, P.wood1);
-      for (let yy = iy + 4; yy < iy + ih; yy += 4) L.hline(lx, lx + 6, yy, P.wood3);
+      // the top of a ladder going down, sized WITH the hatch (it used to be a fixed
+      // 7 px ladder: a toy in the big hatches and in the hi-res pictures)
+      const lw = Math.max(7, rd(iw * 0.32)), rail = Math.max(1, rd(lw / 10));
+      const lx = ix + fl((iw - lw) / 2), step = Math.max(3, rd(ih / 3));
+      L.fillRect(lx, iy + 1, rail, ih - 1, P.wood3);                    // left rail, lit
+      L.fillRect(lx + lw - rail, iy + 1, rail, ih - 1, P.wood1);        // right rail, in shade
+      for (let yy = iy + Math.max(2, rd(step * 0.6)); yy < iy + ih - 1; yy += step) {
+        L.fillRect(lx + rail, yy, lw - 2 * rail, rail, P.wood4);        // a rung
+        L.hline(lx + rail, lx + lw - rail - 1, yy + rail, P.wood0);     // and its shadow
+      }
     } else if (o.grating !== false) {
       L.fillRect(ix, iy, iw, ih, pat((px, py) => {
         const gx = (px - ix) % 4, gy = (py - iy) % 4;
@@ -89271,7 +89277,7 @@
   // 3. SHIP_DECK — the saw, the rope, the offcut, Jack's biscuit case
   // ===========================================================================
   const D = {
-    saw: [242, 82, 18, 18],          // the saw jammed upright in a spare spar on the bulwark
+    saw: [236, 78, 32, 26],          // the saw jammed upright in a spare spar on the bulwark (spar + saw)
     coil: [242, 172, 26, 14],         // the coil by the main hatch (the location paints it) + a ring-bolt
     offcut: [186, 129, 30, 8],        // the offcut from the rollers, with its sawdust
     caseAt: [160, 151],               // Jack's biscuit case (bottom centre), on the empty shipyard strip
@@ -89340,24 +89346,37 @@
 
   function paintSaw(L, s) {
     const free = !!F(s).c01_sawFree;
-    if (!free) {
-      // the blade, jammed at a slant in a cut across the top spar: a dark
-      // outline, bright steel catching the sky, and the handle with its hand-hole
-      L.fillPoly([245, 97, 255, 97, 256, 90, 247, 92], P.rock5);
-      L.line(247, 92, 256, 90, P.rock6); L.line(248, 93, 254, 92, P.white);   // the back edge, and a glint
-      L.line(245, 97, 247, 92, P.rock2); L.line(255, 97, 256, 90, P.rock3);
-      L.pset(250, 95, P.rock4); L.pset(252, 94, P.rock4);
-      L.fillPoly([255, 89, 261, 87, 262, 94, 256, 95], P.wood4);            // the handle
-      L.line(255, 89, 261, 87, P.wood5); L.line(262, 88, 262, 94, P.bark1); L.line(256, 95, 262, 94, P.bark1);
-      L.fillRect(258, 89, 2, 3, P.bark0);                                   // its hand-hole
-      L.pset(256, 91, P.gold1); L.pset(256, 93, P.gold1);                   // brass screws
+    // THE SPARE SPAR: a round log lying along the rail, sawn square at both
+    // ends (pale end-grain with rings), lit along the top, dark underneath
+    L.thickLine(238, 99, 266, 99, 5, P.wood2);
+    L.hline(239, 265, 97, P.wood5); L.hline(239, 265, 98, P.wood4);       // the lit top of the log
+    L.hline(239, 265, 101, P.wood1); L.hline(239, 265, 102, P.bark1);     // its shadowed underside
+    for (const ex of [237, 266]) {                                        // the sawn ends
+      L.fillEllipse(ex, 99, 2, 3, P.wood5); L.pset(ex, 99, P.wood3); L.pset(ex, 97, P.wood4);
     }
-    // the cut in the spar (a closed kerf, or split open once the saw is out)
-    L.hline(245, 257, 98, P.bark0);
+    L.hline(240, 264, 103, P.bark0);                                      // its shadow on the rail
+    // the cut across the top of the spar (a closed kerf, or split open once the saw is out)
+    L.vline(251, 96, 100, P.bark0);
     if (free) {
-      L.line(245, 99, 259, 101, P.bark0); L.line(246, 98, 258, 100, P.wood1);
-      for (const [x, y] of [[249, 97], [252, 97], [257, 98]]) L.pset(x, y, P.wood5);   // fresh pale splinters
+      L.line(250, 96, 248, 102, P.bark0); L.line(252, 96, 254, 102, P.bark0);   // split open
+      for (const [x, y] of [[249, 96], [253, 96], [247, 101]]) L.pset(x, y, P.cream3);   // fresh pale splinters
+      return;
     }
+    // THE CARPENTER'S HANDSAW standing up out of the cut, tilted to the right:
+    // a long steel blade (toe buried in the kerf, heel up by the handle) with a
+    // toothed front edge, a bright glint along its back, and the wooden handle
+    // with its hand-hole and two brass screws
+    L.fillPoly([248, 98, 254, 98, 262, 85, 255, 82], P.rock5);            // the blade
+    L.line(254, 98, 262, 85, P.rock3);                                    // back edge, in shade
+    L.line(250, 95, 256, 84, P.white); L.line(251, 95, 257, 85, P.rock6); // the glint along the steel
+    for (let i = 0; i <= 8; i++) {                                        // the teeth along the front edge
+      const x = Math.round(248 + i * (255 - 248) / 8), y = Math.round(98 - i * (98 - 82) / 8);
+      L.pset(x - 1, y, (i & 1) ? P.rock1 : P.rock4);
+    }
+    L.fillPoly([255, 81, 263, 76, 267, 83, 262, 87], P.wood4);            // the handle
+    L.line(255, 81, 263, 76, P.wood5); L.line(263, 76, 267, 83, P.bark1); L.line(267, 83, 262, 87, P.bark1);
+    L.fillRect(260, 79, 3, 3, P.bark0); L.pset(260, 79, P.bark1);         // its hand-hole
+    L.pset(257, 83, P.gold2); L.pset(259, 85, P.gold1);                   // brass screws
   }
   function paintCoil(L, s) {
     // the ring-bolt in the deck beside the coil, and the rope's end lashed to it
