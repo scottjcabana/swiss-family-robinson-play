@@ -61260,7 +61260,7 @@
     stores: [224, 128, 28, 18], stores_ap: [238, 170, 'N'], stump: [160, 172, 16, 10], stump_ap: [150, 182, 'E'],
     cuirass: [228, 110, 14, 14], cuirass_ap: [232, 170, 'N'], fruit_saplings: [40, 90, 46, 36], fruit_saplings_ap: [44, 142, 'N'],
     spade_by_roots: [150, 130, 8, 18], spade_by_roots_ap: [152, 160, 'N'], bird_cask: [256, 160, 14, 12], bird_cask_ap: [262, 176, 'N'],
-    pigeon_nests: [112, 46, 24, 14], grizzle_shafts: [150, 170, 'E'], flamingo_at: [304, 176], pasture_wander: [168, 180, 40, 8], poultry_wander: [256, 128, 38, 20],
+    pigeon_nests: [112, 46, 24, 14], grizzle_shafts: [150, 170, 'E'], flamingo_at: [304, 176], pasture_wander: [168, 158, 40, 6],   // up by the roots: lower, the grazing cow and Grizzle covered the little stump (ch06 lasso practice) poultry_wander: [256, 128, 38, 20],
     // Chapter 7
     iron_pan: [46, 140, 22, 8], iron_pan_ap: [58, 170, 'N'], warm_pot: [74, 148, 12, 10], warm_pot_ap: [80, 170, 'N'],
     candle_bush: [8, 96, 28, 26], candle_bush_ap: [24, 140, 'N'], c07_bush: [34, 140, 'W'],
@@ -121241,7 +121241,7 @@
     }
     // the cow and the sow
     if (f.c08_dinner && !housed && f.tod !== 'night') {
-      add({ id: 'cow', name: 'the cow', nouns: ['cow'], sprite: 'cow', anim: 'eat', at: [292, 158], dir: 'W',
+      add({ id: 'cow', name: 'the cow', nouns: ['cow'], sprite: 'cow', anim: 'eat', at: [278, 186], dir: 'W',   // (at 292,158 she stood on the tool rack's rope peg)
         look: 'The cow, chewing slowly and thinking about nothing in particular.', talk: (ctx) => { ctx.sfx('moo'); return 'Moooo.'; }, hand: 'She leans into your hand. Cows are generous with their weight.' });
     }
     if (!housed && f.tod !== 'night') {
@@ -121906,7 +121906,7 @@
         const stg = f.c08_tarred ? 'tar' : f.c08_clayed ? 'clay' : 'frame';
         add({ id: 'c08_rootframe', baseline: 159, draw: movedProp('rootframe_rh', () => stg, (g, st) => A.rootFrame(g, st, stg), RH_FRAME[0], RH_FRAME[1]) });
       }
-      add({ id: 'tar_pot', name: 'pot of tar', nouns: ['tar', 'pitch', 'pot', 'lime-water', 'lime', 'tar pot'], rect: mv(SP('tar_pot', [44, 162, 12, 10]), RH_TAR), approach: [200, 180, 'N'], baseline: 172,
+      add({ id: 'tar_pot', name: 'pot of tar', nouns: ['tar', 'pitch', 'pot', 'lime-water', 'lime', 'tar pot'], rect: mv(SP('tar_pot', [44, 162, 12, 10]), RH_TAR), approach: [216, 176, 'W'], baseline: 172,   // stand beside the pot, not in front of it (Father hid it)
         draw: movedProp('tarpot_rh', null, (g) => A.tarPot(g), RH_TAR[0], RH_TAR[1]),
         look: 'Pitch from the wreck, warmed in its pot, and a bucket of lime-water beside it.',
         hand: fn.rootTar, use: { '*': 'Tar wants a brush, not that.' } });
